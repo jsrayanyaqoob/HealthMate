@@ -66,9 +66,11 @@ export default function Dashboard() {
   };
 
   // 🚪 Logout (placeholder)
-  const handleLogout = () => {
-    alert("Logged out!");
-  };
+const handleLogout = () => {
+  localStorage.removeItem("user"); // clear user info
+  window.location.href = "/";       // redirect to home page
+};
+
 
   return (
     <div className="min-h-screen bg-[#f8f9fb] flex flex-col">

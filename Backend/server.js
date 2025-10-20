@@ -73,6 +73,60 @@ app.put("/api/users/:id", async (req, res) => {
   }
 });
 
+// ================== Signup Route ==================
+app.post("/api/auth/signup", async (req, res) => {
+  const { name, email, password } = req.body;
+
+  if (!name || !email || !password) {
+    return res.status(400).json({ message: "All fields are required" });
+  }
+
+  try {
+    // Check if user already exists
+    const existingUser = await User.findOne({ email });
+    if (existingUser) {
+      return res.status(400).json({ message: "Email already in use" });
+    }
+
+    // Create new user
+    const newUser = await User.create({ name, email, password });
+
+    res.status(201).json({
+      message: "Signup successful!",
+      user: { id: newUser._id, name: newUser.name, email: newUser.email },
+    });
+  } catch (err) {
+    console.error("Signup error:", err);
+    res.status(500).json({ message: "Server error during signup" });
+  }
+});
+
+
+// ================== Login Route ==================
+app.post("/api/auth/login", async (req, res) => {
+  const { email, password } = req.body;
+
+  if (!email || !password) {
+    return res.status(400).json({ message: "Email and password are required" });
+  }
+
+  try {
+    const user = await User.findOne({ email });
+    if (!user || user.password !== password) {
+      return res.status(401).json({ message: "Invalid email or password" });
+    }
+
+    res.status(200).json({
+      message: "Login successful!",
+      user: { id: user._id, name: user.name, email: user.email },
+    });
+  } catch (err) {
+    console.error("Login error:", err);
+    res.status(500).json({ message: "Server error during login" });
+  }
+});
+
+
 // ================== Start ==================
 app.listen(PORT, () => {
   console.log(`🚀 Server running on port ${PORT}`);
