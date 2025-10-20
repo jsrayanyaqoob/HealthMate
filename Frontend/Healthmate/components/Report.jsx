@@ -1,160 +1,198 @@
 import React, { useState } from "react";
-import { motion } from "framer-motion";
+import {
+    ArrowLeft,
+    CalendarDays,
+    IndianRupee,
+    FileUp,
+    StickyNote,
+} from "lucide-react";
+import { useNavigate } from "react-router-dom";
 
-export default function Report() {
-  const [formData, setFormData] = useState({
-    reportTitle: "",
-    testName: "",
-    files: [],
-    hospital: "",
-    doctor: "",
-    date: "",
-    price: "",
-    notes: "",
-  });
+export default function AddReport() {
+    const navigate = useNavigate();
+    const [formData, setFormData] = useState({
+        title: "",
+        testName: "",
+        date: "",
+        price: "",
+        notes: "",
+        files: [],
+    });
 
-  const [aiResponse, setAiResponse] = useState("");
+    const handleChange = (e) => {
+        const { name, value, files } = e.target;
+        if (name === "files") {
+            setFormData({ ...formData, files: Array.from(files) });
+        } else {
+            setFormData({ ...formData, [name]: value });
+        }
+    };
 
-  // Handle input changes
-  const handleChange = (e) => {
-    const { name, value } = e.target;
-    setFormData({ ...formData, [name]: value });
-  };
+    const handleSubmit = async (e) => {
+        e.preventDefault();
 
-  // Handle file upload
-  const handleFiles = (e) => {
-    setFormData({ ...formData, files: e.target.files });
-  };
+        const payload = {
+            title: formData.title || "Untitled Report",
+            type: "Medical",
+            description: `
+Test Name: ${formData.testName}
+Date: ${formData.date}
+Price: ${formData.price}
+Notes: ${formData.notes}
+      `,
+        };
 
-  // Submit report
-  const handleSubmit = async (e) => {
-    e.preventDefault();
+        try {
+            const res = await fetch("http://localhost:5000/api/reports", {
+                method: "POST",
+                headers: { "Content-Type": "application/json" },
+                body: JSON.stringify(payload),
+            });
 
-    // Prepare form data for backend / Cloudinary
-    const data = new FormData();
-    data.append("reportTitle", formData.reportTitle);
-    data.append("testName", formData.testName);
-    data.append("hospital", formData.hospital);
-    data.append("doctor", formData.doctor);
-    data.append("date", formData.date);
-    data.append("price", formData.price);
-    data.append("notes", formData.notes);
+            const data = await res.json();
+            if (data.success) {
+                alert("✅ Report added successfully!");
+                navigate("/dashboard");
+            } else {
+                alert("⚠️ Failed to add report.");
+            }
+        } catch (err) {
+            console.error("Error submitting report:", err);
+            alert("❌ Server error while submitting.");
+        }
+    };
 
-    // Append files
-    for (let i = 0; i < formData.files.length; i++) {
-      data.append("files", formData.files[i]);
-    }
+    return (
+        <>
+            <div className="min-h-screen bg-[#fafafa] flex flex-col items-center py-4 px-4">
 
-    try {
-      // Send to your backend
-      const res = await fetch("http://localhost:5000/api/reports", {
-        method: "POST",
-        body: data,
-      });
 
-      const result = await res.json();
+                {/* Form Card */}
+                <form
+                    onSubmit={handleSubmit}
+                    className="bg-white shadow-md rounded-2xl w-full max-w-3xl p-4 space-y-5"
+                >
 
-      if (res.ok) {
-        // Set AI response
-        setAiResponse(result.aiResponse);
-        alert("Report submitted successfully!");
-      } else {
-        alert(result.message || "Failed to submit report");
-      }
-    } catch (err) {
-      console.error("Error submitting report:", err);
-      alert("Something went wrong!");
-    }
-  };
+                    {/* Header */}
+                    <div className="w-full max-w-3xl flex items-center justify-between mb-8">
+                        <button
+                            onClick={() => navigate(-1)}
+                            className="flex items-center gap-2 text-gray-600 hover:text-pink-600 transition"
+                        >
+                            <ArrowLeft size={18} />
+                            <span>Back</span>
+                        </button>
 
-  return (
-    <div className="min-h-screen bg-gradient-to-br from-white via-pink-50 to-orange-50 px-8 py-10">
-      <h2 className="text-3xl font-bold text-gray-800 mb-6">Submit a Report</h2>
+                        <h1 className="text-2xl font-semibold text-gray-800">
+                            Add new report
+                        </h1>
 
-      <motion.form
-        onSubmit={handleSubmit}
-        className="bg-white p-8 rounded-xl shadow-lg max-w-3xl mx-auto space-y-4"
-        initial={{ opacity: 0, y: 20 }}
-        animate={{ opacity: 1, y: 0 }}
-        transition={{ duration: 0.6 }}
-      >
-        <input
-          type="text"
-          name="reportTitle"
-          value={formData.reportTitle}
-          onChange={handleChange}
-          placeholder="Report Title (Optional)"
-          className="w-full px-4 py-2 border rounded-lg focus:ring-2 focus:ring-pink-400 focus:outline-none"
-        />
-        <input
-          type="text"
-          name="testName"
-          value={formData.testName}
-          onChange={handleChange}
-          placeholder="Test Name"
-          required
-          className="w-full px-4 py-2 border rounded-lg focus:ring-2 focus:ring-pink-400 focus:outline-none"
-        />
-        <input
-          type="file"
-          name="files"
-          multiple
-          onChange={handleFiles}
-          className="w-full"
-        />
-        <input
-          type="text"
-          name="hospital"
-          value={formData.hospital}
-          onChange={handleChange}
-          placeholder="Hospital Name"
-          className="w-full px-4 py-2 border rounded-lg focus:ring-2 focus:ring-pink-400 focus:outline-none"
-        />
-        <input
-          type="text"
-          name="doctor"
-          value={formData.doctor}
-          onChange={handleChange}
-          placeholder="Doctor Name"
-          className="w-full px-4 py-2 border rounded-lg focus:ring-2 focus:ring-pink-400 focus:outline-none"
-        />
-        <input
-          type="date"
-          name="date"
-          value={formData.date}
-          onChange={handleChange}
-          className="w-full px-4 py-2 border rounded-lg focus:ring-2 focus:ring-pink-400 focus:outline-none"
-        />
-        <input
-          type="number"
-          name="price"
-          value={formData.price}
-          onChange={handleChange}
-          placeholder="Price"
-          className="w-full px-4 py-2 border rounded-lg focus:ring-2 focus:ring-pink-400 focus:outline-none"
-        />
-        <textarea
-          name="notes"
-          value={formData.notes}
-          onChange={handleChange}
-          placeholder="Additional Notes"
-          className="w-full px-4 py-2 border rounded-lg focus:ring-2 focus:ring-pink-400 focus:outline-none"
-        />
-        <button
-          type="submit"
-          className="w-full py-3 rounded-lg bg-gradient-to-r from-pink-500 to-orange-500 text-white font-semibold hover:opacity-90 transition"
-        >
-          Submit Report
-        </button>
-      </motion.form>
+                        <div className="w-12"></div> {/* spacing */}
+                    </div>
+                    <div className="grid grid-cols-1 md:grid-cols-2 gap-5">
+                        {/* Title */}
+                        <div>
+                            <label className="block text-sm text-gray-600 mb-1">
+                                Title (optional)
+                            </label>
+                            <input
+                                type="text"
+                                name="title"
+                                placeholder="e.g. Ultrasound Abdomen"
+                                value={formData.title}
+                                onChange={handleChange}
+                                className="w-full border border-gray-300 rounded-lg px-3 py-2 focus:ring-2 focus:ring-pink-400 outline-none"
+                            />
+                        </div>
 
-      {/* AI Response */}
-      {aiResponse && (
-        <div className="mt-10 max-w-3xl mx-auto bg-white p-6 rounded-xl shadow-lg">
-          <h3 className="text-2xl font-bold text-gray-800 mb-4">AI Response</h3>
-          <p className="text-gray-700">{aiResponse}</p>
-        </div>
-      )}
-    </div>
-  );
+                        {/* Test Name */}
+                        <div>
+                            <label className="block text-sm text-gray-600 mb-1">
+                                Test name
+                            </label>
+                            <input
+                                type="text"
+                                name="testName"
+                                placeholder="Ultrasound / X-ray / CBC / ABG"
+                                value={formData.testName}
+                                onChange={handleChange}
+                                required
+                                className="w-full border border-gray-300 rounded-lg px-3 py-2 focus:ring-2 focus:ring-pink-400 outline-none"
+                            />
+                        </div>
+                    </div>
+
+                    {/* File Upload */}
+                    <div>
+                        <label className="block text-sm text-gray-600 mb-1 flex items-center gap-2">
+                            <FileUp size={16} className="text-pink-500" /> Files (optional)
+                        </label>
+                        <input
+                            type="file"
+                            name="files"
+                            multiple
+                            onChange={handleChange}
+                            className="block w-full text-gray-700 text-sm"
+                        />
+                    </div>
+
+                    <div className="grid grid-cols-1 md:grid-cols-2 gap-5">
+                        {/* Date */}
+                        <div>
+                            <label className="block text-sm text-gray-600 mb-1 flex items-center gap-2">
+                                <CalendarDays size={16} className="text-pink-500" /> Date
+                            </label>
+                            <input
+                                type="date"
+                                name="date"
+                                value={formData.date}
+                                onChange={handleChange}
+                                className="w-full border border-gray-300 rounded-lg px-3 py-2 focus:ring-2 focus:ring-pink-400 outline-none"
+                            />
+                        </div>
+
+                        {/* Price */}
+                        <div>
+                            <label className="block text-sm text-gray-600 mb-1 flex items-center gap-2">
+                                <IndianRupee size={16} className="text-pink-500" /> Price (Rs)
+                            </label>
+                            <input
+                                type="number"
+                                name="price"
+                                placeholder="e.g. 3500"
+                                value={formData.price}
+                                onChange={handleChange}
+                                className="w-full border border-gray-300 rounded-lg px-3 py-2 focus:ring-2 focus:ring-pink-400 outline-none"
+                            />
+                        </div>
+                    </div>
+
+                    {/* Notes */}
+                    <div>
+                        <label className="block text-sm text-gray-600 mb-1 flex items-center gap-2">
+                            <StickyNote size={16} className="text-pink-500" /> Additional notes
+                        </label>
+                        <textarea
+                            name="notes"
+                            placeholder="Symptoms, instructions, etc."
+                            value={formData.notes}
+                            onChange={handleChange}
+                            rows="3"
+                            className="w-full border border-gray-300 rounded-lg px-3 py-2 focus:ring-2 focus:ring-pink-400 outline-none resize-none"
+                        ></textarea>
+                    </div>
+
+                    {/* Submit */}
+                    <div className="flex justify-end pt-2">
+                        <button
+                            type="submit"
+                            className="bg-pink-600 text-white px-6 py-2 rounded-lg font-medium hover:bg-pink-700 transition"
+                        >
+                            Save Report
+                        </button>
+                    </div>
+                </form>
+            </div>
+        </>
+    );
 }
