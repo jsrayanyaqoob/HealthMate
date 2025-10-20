@@ -1,18 +1,25 @@
 import React, { useState } from "react";
+import { Link, useNavigate } from "react-router-dom";
+import Navbar from "./Navbar";
 
-export default function Login({ onNavigate }) {
-  const [formData, setFormData] = useState({ email: "", password: "" });
-  const [loading, setLoading] = useState(false);
+export default function Login() {
+  const navigate = useNavigate();
+  const [formData, setFormData] = useState({
+    email: "",
+    password: "",
+    remember: false,
+  });
 
-  // Update form data correctly
   const handleChange = (e) => {
-    setFormData({ ...formData, [e.target.name]: e.target.value });
+    const { name, value, type, checked } = e.target;
+    setFormData({
+      ...formData,
+      [name]: type === "checkbox" ? checked : value,
+    });
   };
 
-  // Handle form submission
   const handleSubmit = async (e) => {
     e.preventDefault();
-    setLoading(true);
 
     try {
       const res = await fetch("http://localhost:5000/api/auth/login", {
@@ -23,68 +30,123 @@ export default function Login({ onNavigate }) {
 
       const data = await res.json();
 
-      console.log("Status:", res.status, "OK:", res.ok);
-      console.log("Response body:", data);
-
       if (res.ok && data.user) {
         localStorage.setItem("user", JSON.stringify(data.user));
-        onNavigate("dashboard");
+        navigate("/dashboard");
       } else {
-        alert(data.message || "Login failed. Check your credentials.");
+        alert(data.message || "Invalid email or password");
       }
-    } catch (err) {
-      console.error("Fetch error:", err);
-      alert("Login failed. Check the console for details.");
-    } finally {
-      setLoading(false);
+    } catch (error) {
+      console.error("Login error:", error);
+      alert("Something went wrong. Check the console.");
     }
   };
 
   return (
-    <div className="flex justify-center items-center min-h-screen bg-gray-100">
-      <div className="bg-white p-8 rounded-xl shadow-md w-full max-w-md">
-        <h2 className="text-2xl font-bold mb-6 text-center text-blue-600">
-          Log In
-        </h2>
-        <form onSubmit={handleSubmit} className="space-y-4">
-          <input
-            type="email"
-            name="email"
-            placeholder="Email Address"
-            value={formData.email}
-            onChange={handleChange}
-            required
-            className="w-full px-4 py-2 border rounded-lg focus:outline-none focus:ring-2 focus:ring-blue-500"
-          />
-          <input
-            type="password"
-            name="password"
-            placeholder="Password"
-            value={formData.password}
-            onChange={handleChange}
-            required
-            className="w-full px-4 py-2 border rounded-lg focus:outline-none focus:ring-2 focus:ring-blue-500"
-          />
-          <button
-            type="submit"
-            className={`w-full py-2 rounded-lg text-white ${
-              loading ? "bg-gray-400" : "bg-blue-500 hover:bg-blue-600"
-            } transition`}
-            disabled={loading}
-          >
-            {loading ? "Logging in..." : "Log In"}
-          </button>
-        </form>
-        <p className="text-sm text-center text-gray-600 mt-4">
-          Don't have an account?{" "}
-          <span
-            className="text-blue-500 hover:underline cursor-pointer"
-            onClick={() => onNavigate("signup")}
-          >
-            Create one
-          </span>
-        </p>
+
+    <>
+    {/* <body className="overflow-hidden"> */}
+
+    <Navbar place="/signup" btnText="Create account"  />
+
+    <div className="min-h-screen flex justify-center items-center bg-gradient-to-b from-white to-gray-100 px-4 pb-25">
+      <div className="w-full max-w-6xl flex flex-col md:flex-row justify-between items-center rounded-2xl shadow-lg">
+        {/* Left Section */}
+        <div className="w-full md:w-1/2 p-8">
+          <h1 className="text-3xl font-bold text-gray-800 mb-2">Welcome back</h1>
+          <p className="text-gray-600 mb-6">
+            Sign in to manage your reports, vitals, and AI insights.{" "}
+            <span className="text-pink-500 font-semibold">Phir se shuru karein.</span>
+          </p>
+
+          <div className="p-4 border rounded-lg flex items-start gap-2 bg-pink-50">
+            <span className="text-pink-600 text-xl">🛡</span>
+            <div>
+              <h3 className="font-semibold text-pink-600">Your data stays yours</h3>
+              <p className="text-sm text-gray-600">
+                Encrypted storage and doctor-only links. Privacy pe full focus.
+              </p>
+            </div>
+          </div>
+        </div>
+
+        {/* Right Section */}
+        <div className="w-full md:w-1/2 p-8 bg-gray-50">
+          <form onSubmit={handleSubmit} className="space-y-5">
+            {/* Email */}
+            <div>
+              <label className="block text-gray-700 font-medium mb-1">Email</label>
+              <div className="flex items-center border rounded-lg px-3">
+                <span className="text-gray-400 mr-2">📧</span>
+                <input
+                  type="email"
+                  name="email"
+                  value={formData.email}
+                  onChange={handleChange}
+                  placeholder="you@example.com"
+                  required
+                  className="w-full py-2 outline-none"
+                />
+              </div>
+            </div>
+
+            {/* Password */}
+            <div>
+              <label className="block text-gray-700 font-medium mb-1">Password</label>
+              <div className="flex items-center border rounded-lg px-3">
+                <span className="text-gray-400 mr-2">🔒</span>
+                <input
+                  type="password"
+                  name="password"
+                  value={formData.password}
+                  onChange={handleChange}
+                  placeholder="Your password"
+                  required
+                  className="w-full py-2 outline-none"
+                />
+              </div>
+            </div>
+
+            {/* Remember Me + Forgot Password */}
+            <div className="flex justify-between items-center text-sm">
+              <label className="flex items-center gap-2">
+                <input
+                  type="checkbox"
+                  name="remember"
+                  checked={formData.remember}
+                  onChange={handleChange}
+                  className="accent-pink-500"
+                />
+                Remember me
+              </label>
+              <button
+                type="button"
+                className="text-pink-500 hover:underline"
+              >
+                Forgot password?
+              </button>
+            </div>
+
+            {/* Sign In Button */}
+            <button
+              type="submit"
+              className="w-full py-2 bg-gradient-to-r from-pink-500 to-orange-400 text-white font-medium rounded-lg hover:opacity-90 transition"
+            >
+              Sign in →
+            </button>
+
+            {/* Signup Link */}
+            <p className="text-center text-sm text-gray-600">
+              New here?{" "}
+              <Link to="/signup" className="text-pink-500 hover:underline font-medium">
+                Create account
+              </Link>
+            </p>
+          </form>
+          </div>
+        </div>
       </div>
-    </div>
+      {/* </body> */}
+      </>
   );
 }

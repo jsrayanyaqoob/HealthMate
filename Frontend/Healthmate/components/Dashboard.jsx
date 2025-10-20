@@ -1,34 +1,25 @@
 import React, { useEffect, useState } from "react";
-import ProfileCard from "./ProfileCard.jsx";
-import Feedback from "./Feedback.jsx";
+import { Trash2, Edit3, FolderOpen, LogOut } from "lucide-react";
 
-export default function Dashboard({ onNavigate }) {
-  const [page, setPage] = useState("dashboard");
+export default function Dashboard() {
   const [users, setUsers] = useState([]);
-  const [currentUser, setCurrentUser] = useState(null);
-  const [editUser, setEditUser] = useState(null);
-  const [editUsername, setEditUsername] = useState("");
+  const [editingId, setEditingId] = useState(null);
+  const [newName, setNewName] = useState("");
 
-  // Load logged-in user
-  useEffect(() => {
-    const user = JSON.parse(localStorage.getItem("user"));
-    if (user) setCurrentUser(user);
-    else onNavigate("home"); // redirect if no user
-  }, [onNavigate]);
+  // Simulated current user
+  const currentUser = {
+    name: "Rayan Yaqoob",
+    email: "rayan@example.com",
+  };
 
-  // Fetch all users
+  // 🧠 Fetch all users from DB
   const fetchUsers = async () => {
     try {
       const res = await fetch("http://localhost:5000/api/users");
       const data = await res.json();
-      if (data.success) {
-        setUsers(data.users);
-      } else {
-        setUsers([]);
-      }
+      if (data.success) setUsers(data.users);
     } catch (err) {
       console.error("Fetch users error:", err);
-      setUsers([]); // prevent crashing
     }
   };
 
@@ -36,161 +27,161 @@ export default function Dashboard({ onNavigate }) {
     fetchUsers();
   }, []);
 
-  // Logout
-  const handleLogout = () => {
-    localStorage.removeItem("user");
-    setCurrentUser(null);
-    onNavigate("home");
-  };
-
-  // Delete user
-  const handleDelete = async (id) => {
-    if (!window.confirm("Are you sure?")) return;
+  // ✍️ Edit user name
+  const handleEdit = async (id) => {
+    if (!newName.trim()) return alert("Name required");
     try {
-      await fetch(`http://localhost:5000/api/users/${id}`, { method: "DELETE" });
-      fetchUsers();
-    } catch (err) {
-      console.error(err);
-      alert("Delete failed");
-    }
-  };
-
-  // Open user (switch context)
-  const handleOpen = (user) => {
-    localStorage.setItem("user", JSON.stringify(user));
-    setCurrentUser(user);
-    alert(`Logged in as ${user.name}`);
-  };
-
-  // Edit user
-  const handleEdit = (user) => {
-    setEditUser(user);
-    setEditUsername(user.name);
-  };
-
-  const handleSaveEdit = async () => {
-    if (!editUsername) return alert("Name cannot be empty");
-    try {
-      await fetch(`http://localhost:5000/api/users/${editUser._id}`, {
+      const res = await fetch(`http://localhost:5000/api/users/${id}`, {
         method: "PUT",
         headers: { "Content-Type": "application/json" },
-        body: JSON.stringify({ name: editUsername }),
+        body: JSON.stringify({ name: newName }),
       });
-      setEditUser(null);
-      fetchUsers();
+      const data = await res.json();
+      if (data.success) {
+        alert("Updated!");
+        setEditingId(null);
+        setNewName("");
+        fetchUsers();
+      }
     } catch (err) {
-      console.error(err);
-      alert("Edit failed");
+      console.error("Edit error:", err);
     }
+  };
+
+  // 🗑️ Delete user
+  const handleDelete = async (id) => {
+    if (!window.confirm("Delete this user?")) return;
+    try {
+      const res = await fetch(`http://localhost:5000/api/users/${id}`, {
+        method: "DELETE",
+      });
+      const data = await res.json();
+      if (data.success) {
+        alert("Deleted");
+        fetchUsers();
+      }
+    } catch (err) {
+      console.error("Delete error:", err);
+    }
+  };
+
+  // 🚪 Logout (placeholder)
+  const handleLogout = () => {
+    alert("Logged out!");
   };
 
   return (
-    <div className="min-h-screen bg-gray-100">
-      {/* Navbar */}
-      <nav className="bg-white shadow-md py-4 px-6 flex items-center relative">
-        <h1 className="text-2xl font-bold text-blue-600">Healthcare</h1>
-
-        <div className="flex gap-6 absolute left-1/2 transform -translate-x-1/2">
-          <button
-            onClick={() => setPage("dashboard")}
-            className="text-gray-700 font-semibold hover:text-blue-600 transition"
-          >
-            Dashboard
-          </button>
-          <button
-            onClick={() => setPage("feedback")}
-            className="text-gray-700 font-semibold hover:text-blue-600 transition"
-          >
-            Feedback
-          </button>
-          <button
-            onClick={() => onNavigate("report")}
-            className="text-gray-700 font-semibold hover:text-blue-600 transition"
-          >
-            Create Report
-          </button>
-          <button
-            onClick={() => setPage("service")}
-            className="text-gray-700 font-semibold hover:text-blue-600 transition"
-          >
-            Service
-          </button>
-          <button
-            onClick={() => setPage("faq")}
-            className="text-gray-700 font-semibold hover:text-blue-600 transition"
-          >
-            FAQ
-          </button>
+    <div className="min-h-screen bg-[#f8f9fb] flex flex-col">
+      {/* 🧭 Navbar */}
+      <header className="bg-white shadow-md py-3 px-8 flex justify-between items-center">
+        {/* Left - Logo */}
+        <div className="flex items-center space-x-2">
+          <h1 className="text-xl font-bold text-pink-600">HealthMate</h1>
         </div>
 
-        <div className="flex items-center gap-4 ml-auto">
-          <div className="w-10 h-10 rounded-full bg-gray-300 flex items-center justify-center text-white font-semibold">
-            {currentUser?.name?.charAt(0) || "U"}
-          </div>
-          <span className="font-semibold text-gray-700">{currentUser?.name}</span>
+        {/* Middle - Nav Links */}
+        <nav className="hidden md:flex space-x-8">
+          <a href="#" className="text-gray-700 hover:text-pink-600 font-medium">
+            Home
+          </a>
+          <a href="#" className="text-gray-700 hover:text-pink-600 font-medium">
+            Report
+          </a>
+          <a href="#" className="text-gray-700 hover:text-pink-600 font-medium">
+            Feedback
+          </a>
+          <a href="#" className="text-gray-700 hover:text-pink-600 font-medium">
+            About
+          </a>
+        </nav>
+
+        {/* Right - User Avatar + Logout */}
+        <div className="flex items-center space-x-4">
           <button
             onClick={handleLogout}
-            className="px-4 py-2 bg-red-500 text-white rounded-lg hover:bg-red-600 transition"
+            className="flex items-center gap-1 text-pink-600 border border-pink-500 px-3 py-1 rounded-lg hover:bg-pink-50 transition"
           >
-            Logout
+            <LogOut size={16} /> Logout
           </button>
+          <div className="w-10 h-10 rounded-full bg-pink-500 text-white flex items-center justify-center font-semibold">
+            {currentUser.name.charAt(0).toUpperCase()}
+          </div>
         </div>
-      </nav>
+      </header>
 
-      {/* Main Content */}
-      <div className="p-6">
-        {page === "dashboard" && (
-          <>
-            <h1 className="text-3xl font-bold text-gray-800 mb-6">Dashboard</h1>
-            <div className="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-3 lg:grid-cols-4 gap-6">
-              {users.map((user) => (
-                <ProfileCard
-                  key={user._id}
-                  title={user.name}
-                  subtitle={user.email}
-                  lastActivity={new Date(user.updatedAt || user.createdAt).toLocaleDateString()}
-                  onEdit={() => handleEdit(user)}
-                  onDelete={() => handleDelete(user._id)}
-                  onOpen={() => handleOpen(user)}
-                />
-              ))}
+      {/* 🧍 Cards */}
+      <main className="flex-grow px-8 py-6 grid grid-cols-1 sm:grid-cols-2 md:grid-cols-3 lg:grid-cols-4 gap-6 ">
+        {users.map((u) => (
+          <div
+            key={u._id}
+            className="bg-white rounded-2xl shadow-md p-5 flex flex-col justify-between h-50"
+          >
+            <div className="flex justify-between items-start">
+              {/* Left */}
+              <div>
+                <div className="w-10 h-10 rounded-full bg-pink-500 text-white flex items-center justify-center font-semibold mb-3">
+                  {u.name?.charAt(0).toUpperCase() || "?"}
+                </div>
+
+                {editingId === u._id ? (
+                  <input
+                    type="text"
+                    className="border rounded px-2 py-1 w-full"
+                    value={newName}
+                    onChange={(e) => setNewName(e.target.value)}
+                  />
+                ) : (
+                  <h2 className="text-lg font-semibold text-gray-800">
+                    {u.name || "(no name)"}
+                  </h2>
+                )}
+                <p className="text-gray-500 text-sm mt-1">{u._id}</p>
+              </div>
+
+              {/* Right - Last Activity */}
+              <div className="text-sm text-gray-400 text-right">
+                Last Activity:{" "}
+                <span className="font-medium text-gray-600">
+                  {new Date(u.updatedAt || u.createdAt).toLocaleDateString()}
+                </span>
+              </div>
             </div>
-          </>
-        )}
 
-        {page === "feedback" && <Feedback />}
-        {page === "service" && <div>Service Page</div>}
-        {page === "faq" && <div>FAQ Page</div>}
-      </div>
+            {/* Buttons */}
+            <div className="flex justify-between mt-4">
+              {editingId === u._id ? (
+                <button
+                  onClick={() => handleEdit(u._id)}
+                  className="flex items-center gap-1 px-3 py-1 border border-green-500 text-green-600 rounded-lg text-sm hover:bg-green-50 transition"
+                >
+                  Save
+                </button>
+              ) : (
+                <button
+                  onClick={() => {
+                    setEditingId(u._id);
+                    setNewName(u.name);
+                  }}
+                  className="flex items-center gap-1 px-3 py-1 border border-pink-500 text-pink-600 rounded-lg text-sm hover:bg-pink-50 transition"
+                >
+                  <Edit3 size={16} /> Edit
+                </button>
+              )}
 
-      {/* Edit Modal */}
-      {editUser && (
-        <div className="fixed inset-0 bg-black bg-opacity-50 flex justify-center items-center">
-          <div className="bg-white rounded-xl p-6 w-96">
-            <h2 className="text-xl font-semibold mb-4">Edit User</h2>
-            <input
-              type="text"
-              value={editUsername}
-              onChange={(e) => setEditUsername(e.target.value)}
-              className="w-full px-4 py-2 border rounded-lg mb-4"
-            />
-            <div className="flex justify-end space-x-2">
               <button
-                onClick={() => setEditUser(null)}
-                className="px-4 py-2 bg-gray-300 rounded-lg hover:bg-gray-400 transition"
+                onClick={() => handleDelete(u._id)}
+                className="flex items-center gap-1 px-3 py-1 border border-pink-500 text-pink-600 rounded-lg text-sm hover:bg-pink-50 transition"
               >
-                Cancel
+                <Trash2 size={16} /> Delete
               </button>
-              <button
-                onClick={handleSaveEdit}
-                className="px-4 py-2 bg-blue-500 text-white rounded-lg hover:bg-blue-600 transition"
-              >
-                Save
+
+              <button className="flex items-center gap-1 px-3 py-1 border border-pink-500 text-pink-600 rounded-lg text-sm hover:bg-pink-50 transition">
+                <FolderOpen size={16} /> Open
               </button>
             </div>
           </div>
-        </div>
-      )}
+        ))}
+      </main>
     </div>
   );
 }
