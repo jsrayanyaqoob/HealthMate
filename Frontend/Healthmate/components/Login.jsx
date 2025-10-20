@@ -1,14 +1,25 @@
-import React, { useState } from "react";
+import React, { useState, useEffect } from "react";
 import { Link, useNavigate } from "react-router-dom";
 import Navbar from "./Navbar";
 
 export default function Login() {
   const navigate = useNavigate();
+
+
+  useEffect(() => {
+  const user = JSON.parse(localStorage.getItem("user"));
+  if (user) {
+    navigate("/dashboard");
+  }
+}, []);
+
+
   const [formData, setFormData] = useState({
     email: "",
     password: "",
     remember: false,
   });
+
 
   const handleChange = (e) => {
     const { name, value, type, checked } = e.target;

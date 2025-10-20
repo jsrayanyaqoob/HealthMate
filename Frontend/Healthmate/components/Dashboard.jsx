@@ -1,16 +1,19 @@
 import React, { useEffect, useState } from "react";
 import { Trash2, Edit3, FolderOpen, LogOut } from "lucide-react";
+import { Link, useNavigate } from "react-router-dom"
 
 export default function Dashboard() {
   const [users, setUsers] = useState([]);
   const [editingId, setEditingId] = useState(null);
   const [newName, setNewName] = useState("");
+  const navigate = useNavigate()
 
-  // Simulated current user
-  const currentUser = {
-    name: "Rayan Yaqoob",
-    email: "rayan@example.com",
-  };
+    useEffect(() => {
+    const user = JSON.parse(localStorage.getItem("user"));
+    if (!user) {
+      navigate("/login");
+    }
+  }, []);
 
   // 🧠 Fetch all users from DB
   const fetchUsers = async () => {
@@ -65,11 +68,14 @@ export default function Dashboard() {
     }
   };
 
+  // i am getting the info of user to have the first name in the image of dashboard nav
+  const user = JSON.parse(localStorage.getItem("user")); 
+
   // 🚪 Logout (placeholder)
-const handleLogout = () => {
-  localStorage.removeItem("user"); // clear user info
-  window.location.href = "/";       // redirect to home page
-};
+    const handleLogout = () => {
+      localStorage.removeItem("user"); // clear user info
+      window.location.href = "/";       // redirect to home page
+    };
 
 
   return (
@@ -83,19 +89,20 @@ const handleLogout = () => {
 
         {/* Middle - Nav Links */}
         <nav className="hidden md:flex space-x-8">
-          <a href="#" className="text-gray-700 hover:text-pink-600 font-medium">
+          <Link to="/dashboard" className="text-gray-700 hover:text-pink-600 font-medium">
             Home
-          </a>
-          <a href="#" className="text-gray-700 hover:text-pink-600 font-medium">
+          </Link>
+          <Link to="/report" className="text-gray-700 hover:text-pink-600 font-medium">
             Report
-          </a>
-          <a href="#" className="text-gray-700 hover:text-pink-600 font-medium">
+          </Link>
+          <Link to="/feedback" className="text-gray-700 hover:text-pink-600 font-medium">
             Feedback
-          </a>
-          <a href="#" className="text-gray-700 hover:text-pink-600 font-medium">
+          </Link>
+          <Link to="/about" className="text-gray-700 hover:text-pink-600 font-medium">
             About
-          </a>
+          </Link>
         </nav>
+
 
         {/* Right - User Avatar + Logout */}
         <div className="flex items-center space-x-4">
@@ -106,7 +113,7 @@ const handleLogout = () => {
             <LogOut size={16} /> Logout
           </button>
           <div className="w-10 h-10 rounded-full bg-pink-500 text-white flex items-center justify-center font-semibold">
-            {currentUser.name.charAt(0).toUpperCase()}
+            {user.name[0].toUpperCase()}
           </div>
         </div>
       </header>

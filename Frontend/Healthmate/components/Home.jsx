@@ -1,125 +1,14 @@
-// import React from "react";
-
-// export default function HomePage({ onNavigate }) {
-//   return (
-//     <div className="min-h-screen bg-gray-50">
-//       {/* Hero Section */}
-//       <section className="bg-gradient-to-r from-blue-500 to-purple-600 text-white">
-//         <div className="container mx-auto px-6 py-32 flex flex-col md:flex-row items-center">
-//           <div className="md:w-1/2 text-center md:text-left">
-//             <h1 className="text-5xl font-bold mb-6">
-//               Welcome to Healthcare 🏥
-//             </h1>
-//             <p className="text-lg mb-6">
-//               Your one-stop platform for health information, appointments, and personalized care.
-//             </p>
-//             <div className="flex flex-col sm:flex-row gap-4 justify-center md:justify-start">
-//               <button
-//                 onClick={() => onNavigate("signup")}
-//                 className="px-6 py-3 bg-white text-blue-600 font-semibold rounded-full hover:bg-gray-100 transition"
-//               >
-//                 Try for Free
-//               </button>
-//               <button
-//                 onClick={() => onNavigate("login")}
-//                 className="px-6 py-3 border-2 border-white text-white font-semibold rounded-full hover:bg-white hover:text-blue-600 transition"
-//               >
-//                 Get App
-//               </button>
-//             </div>
-//           </div>
-//           <div className="md:w-1/2 mt-12 md:mt-0 flex justify-center">
-//             <div className="w-80 h-80 bg-white   rounded-3xl flex items-center justify-center text-gray-400 font-bold text-2xl">
-//               <img src="heartImg.png" alt="" />
-//             </div>
-//           </div>
-//         </div>
-//       </section>
-
-//       {/* Quote Section */}
-//       <section className="py-20 bg-white text-center">
-//         <h2 className="text-3xl font-semibold mb-4">
-//           "Health is wealth – invest in yourself!"
-//         </h2>
-//         <p className="text-gray-600 max-w-xl mx-auto">
-//           Our platform helps you track your health, book appointments with doctors, and access reliable health information anytime, anywhere.
-//         </p>
-//       </section>
-
-//       {/* Features Section */}
-//       <section className="py-20 bg-gray-50">
-//         <div className="container mx-auto px-6">
-//           <h2 className="text-4xl font-bold text-center mb-12">Why Choose Us?</h2>
-//           <div className="grid grid-cols-1 md:grid-cols-3 gap-10">
-//             <div className="bg-white p-8 rounded-2xl shadow-lg hover:shadow-xl transition text-center">
-//               <div className="w-16 h-16 mx-auto bg-blue-100 rounded-full flex items-center justify-center mb-4 text-blue-600 font-bold text-xl">
-//                 1
-//               </div>
-//               <h3 className="text-xl font-semibold mb-2">Track Health</h3>
-//               <p className="text-gray-500">
-//                 Monitor your vitals, set reminders, and stay on top of your health goals.
-//               </p>
-//             </div>
-//             <div className="bg-white p-8 rounded-2xl shadow-lg hover:shadow-xl transition text-center">
-//               <div className="w-16 h-16 mx-auto bg-blue-100 rounded-full flex items-center justify-center mb-4 text-blue-600 font-bold text-xl">
-//                 2
-//               </div>
-//               <h3 className="text-xl font-semibold mb-2">Book Appointments</h3>
-//               <p className="text-gray-500">
-//                 Schedule consultations with trusted doctors in just a few clicks.
-//               </p>
-//             </div>
-//             <div className="bg-white p-8 rounded-2xl shadow-lg hover:shadow-xl transition text-center">
-//               <div className="w-16 h-16 mx-auto bg-blue-100 rounded-full flex items-center justify-center mb-4 text-blue-600 font-bold text-xl">
-//                 3
-//               </div>
-//               <h3 className="text-xl font-semibold mb-2">Reliable Information</h3>
-//               <p className="text-gray-500">
-//                 Access trusted articles and resources to make informed health decisions.
-//               </p>
-//             </div>
-//           </div>
-//         </div>
-//       </section>
-
-//       {/* CTA Section */}
-//       <section className="py-20 bg-gradient-to-r from-purple-600 to-blue-500 text-white text-center">
-//         <h2 className="text-3xl font-bold mb-6">Get Started Today</h2>
-//         <p className="mb-8 max-w-xl mx-auto">
-//           Sign up now and take control of your health journey.
-//         </p>
-//         <button
-//           onClick={() => onNavigate("signup")}
-//           className="px-8 py-4 bg-white text-blue-600 font-semibold rounded-full hover:bg-gray-100 transition"
-//         >
-//           Try for Free
-//         </button>
-//       </section>
-
-//       {/* Footer */}
-//       <footer className="bg-gray-800 text-white py-8 text-center">
-//         &copy; 2025 Healthcare. All rights reserved.
-//       </footer>
-//     </div>
-//   );
-// }
-
-
-
-
-import React, { use } from "react";
+import React from "react";
 import { motion } from "framer-motion";
 import { useNavigate } from "react-router-dom";
 
 export default function HomePage() {
-
-  const navigate = useNavigate()
+  const navigate = useNavigate();
 
   return (
     <div className="min-h-screen bg-gradient-to-br from-white via-pink-50 to-orange-50">
       {/* Navbar */}
       <nav className="flex items-center justify-between px-8 py-5">
-        {/* Logo */}
         <div className="flex items-center space-x-2">
           <div className="bg-gradient-to-r from-pink-500 to-orange-500 p-2 rounded-full">
             <span className="text-white font-bold text-lg">❤</span>
@@ -130,7 +19,6 @@ export default function HomePage() {
           </div>
         </div>
 
-        {/* Links */}
         <div className="hidden md:flex space-x-8 text-gray-700 font-medium">
           <a href="#features" className="hover:text-pink-500 transition">Features</a>
           <a href="#how" className="hover:text-pink-500 transition">How it works</a>
@@ -138,12 +26,17 @@ export default function HomePage() {
           <a href="#start" className="hover:text-pink-500 transition">Get started</a>
         </div>
 
-        {/* Auth Buttons */}
         <div className="flex space-x-3">
-          <button className="px-4 py-2 rounded-lg border border-pink-500 text-pink-500 font-semibold hover:bg-pink-50 transition" onClick={() => navigate("/login")}>
+          <button
+            className="px-4 py-2 rounded-lg border border-pink-500 text-pink-500 font-semibold hover:bg-pink-50 transition"
+            onClick={() => navigate("/login")}
+          >
             Sign in
           </button>
-          <button className="px-4 py-2 rounded-lg bg-gradient-to-r from-pink-500 to-orange-500 text-white font-semibold hover:opacity-90 transition" onClick={() => navigate("/signup")}>
+          <button
+            className="px-4 py-2 rounded-lg bg-gradient-to-r from-pink-500 to-orange-500 text-white font-semibold hover:opacity-90 transition"
+            onClick={() => navigate("/signup")}
+          >
             Create account
           </button>
         </div>
@@ -162,10 +55,10 @@ export default function HomePage() {
 
           <h1 className="text-4xl md:text-6xl font-bold text-gray-800 leading-tight mb-4">
             Manage your <span className="text-pink-500">health, reports</span> &{" "}
-            <span className="text-orange-500"> <br />vitals</span> — beautifully
+            <span className="text-orange-500"> <br /> vitals</span> — beautifully
           </h1>
 
-          <p className="text-gray-600 max-w-2.2xl mx-auto mb-8">
+          <p className="text-gray-600 max-w-3xl mx-auto mb-8">
             Upload your medical reports, get AI-powered explanations, and track your vitals — 
             all in one colorful, easy <br /> experience.
           </p>
@@ -182,14 +75,146 @@ export default function HomePage() {
       </section>
 
       {/* Why You'll Love Section */}
-      <section id="features" className="mt-18 px-8 text-center">
-        <h2 className="text-3xl font-bold text-gray-800 mb-4">
+      <section id="features" className="mt-24 px-8 text-center">
+        <h2 className="text-3xl md:text-4xl font-bold text-gray-800 mb-4">
           Why you'll love HealthMate
         </h2>
-        <p className="text-gray-600 max-w-xl mx-auto">
+        <p className="text-gray-600 max-w-xl mx-auto mb-12">
           Simple, vibrant, and secure — designed for families and caregivers.
         </p>
+
+        <div className="grid md:grid-cols-3 gap-8">
+          <motion.div
+            whileHover={{ scale: 1.05 }}
+            className="bg-white rounded-xl shadow-lg p-6 flex flex-col items-center"
+          >
+            <div className="bg-pink-100 text-pink-500 p-3 rounded-full mb-4">
+              📄
+            </div>
+            <h3 className="text-xl font-semibold mb-2">Easy Report Upload</h3>
+            <p className="text-gray-600 text-center">
+              Upload PDFs & photos of reports — Gemini explains in EN + Roman Urdu.
+            </p>
+          </motion.div>
+
+          <motion.div
+            whileHover={{ scale: 1.05 }}
+            className="bg-white rounded-xl shadow-lg p-6 flex flex-col items-center"
+          >
+            <div className="bg-green-100 text-green-500 p-3 rounded-full mb-4">
+              📊
+            </div>
+            <h3 className="text-xl font-semibold mb-2">Track Vitals</h3>
+            <p className="text-gray-600 text-center">
+              Track BP, Sugar, Weight with reminders and insights to stay healthy.
+            </p>
+          </motion.div>
+
+          <motion.div
+            whileHover={{ scale: 1.05 }}
+            className="bg-white rounded-xl shadow-lg p-6 flex flex-col items-center"
+          >
+            <div className="bg-orange-100 text-orange-500 p-3 rounded-full mb-4">
+              🔒
+            </div>
+            <h3 className="text-xl font-semibold mb-2">Privacy First</h3>
+            <p className="text-gray-600 text-center">
+              Encrypted storage, signed links for doctors — your data stays yours.
+            </p>
+          </motion.div>
+        </div>
       </section>
+
+      {/* How it works Section */}
+      <section id="how" className="mt-24 px-8 text-center">
+        <h2 className="text-3xl md:text-4xl font-bold text-gray-800 mb-12">
+          How HealthMate Works
+        </h2>
+
+        <div className="grid md:grid-cols-3 gap-10">
+          <motion.div whileHover={{ y: -5 }} className="bg-white rounded-xl shadow-lg p-6">
+            <div className="bg-pink-100 text-pink-500 p-3 rounded-full mb-4 w-max mx-auto">
+              1️⃣
+            </div>
+            <h3 className="text-xl font-semibold mb-2">Upload Reports</h3>
+            <p className="text-gray-600 text-center">
+              Take photos or upload PDFs of your medical reports.
+            </p>
+          </motion.div>
+
+          <motion.div whileHover={{ y: -5 }} className="bg-white rounded-xl shadow-lg p-6">
+            <div className="bg-orange-100 text-orange-500 p-3 rounded-full mb-4 w-max mx-auto">
+              2️⃣
+            </div>
+            <h3 className="text-xl font-semibold mb-2">Get AI Insights</h3>
+            <p className="text-gray-600 text-center">
+              Our AI explains results in simple English & Roman Urdu.
+            </p>
+          </motion.div>
+
+          <motion.div whileHover={{ y: -5 }} className="bg-white rounded-xl shadow-lg p-6">
+            <div className="bg-green-100 text-green-500 p-3 rounded-full mb-4 w-max mx-auto">
+              3️⃣
+            </div>
+            <h3 className="text-xl font-semibold mb-2">Track Vitals</h3>
+            <p className="text-gray-600 text-center">
+              Monitor your vitals and get reminders to stay on track.
+            </p>
+          </motion.div>
+        </div>
+      </section>
+
+      {/* FAQ Section */}
+      <section id="faq" className="mt-24 px-8 text-center">
+        <h2 className="text-3xl md:text-4xl font-bold text-gray-800 mb-12">
+          Frequently Asked Questions
+        </h2>
+
+        <div className="max-w-4xl mx-auto space-y-6 text-left">
+          <motion.div whileHover={{ scale: 1.02 }} className="bg-white p-6 rounded-xl shadow-lg">
+            <h3 className="font-semibold text-lg mb-2">Is HealthMate secure?</h3>
+            <p className="text-gray-600">
+              Yes! All your data is encrypted and private. You control what you share.
+            </p>
+          </motion.div>
+
+          <motion.div whileHover={{ scale: 1.02 }} className="bg-white p-6 rounded-xl shadow-lg">
+            <h3 className="font-semibold text-lg mb-2">Can I track multiple vitals?</h3>
+            <p className="text-gray-600">
+              Absolutely. Track BP, sugar, and weight easily with reminders.
+            </p>
+          </motion.div>
+
+          <motion.div whileHover={{ scale: 1.02 }} className="bg-white p-6 rounded-xl shadow-lg">
+            <h3 className="font-semibold text-lg mb-2">How does AI explain reports?</h3>
+            <p className="text-gray-600">
+              Our AI provides clear explanations in English and Roman Urdu.
+            </p>
+          </motion.div>
+        </div>
+      </section>
+
+      {/* Get Started / Call to Action */}
+      <section id="start" className="mt-24 px-8 text-center mb-20">
+        <h2 className="text-3xl md:text-4xl font-bold text-gray-800 mb-6">
+          Ready to take control of your health?
+        </h2>
+        <p className="text-gray-600 max-w-xl mx-auto mb-8">
+          Sign up now and start tracking your reports and vitals effortlessly.
+        </p>
+
+        <button
+          onClick={() => navigate("/signup")}
+          className="px-8 py-4 rounded-lg bg-gradient-to-r from-pink-500 to-orange-500 text-white font-semibold hover:opacity-90 transition"
+        >
+          Create Account
+        </button>
+      </section>
+
+      {/* Footer */}
+      <footer className="text-center text-gray-500 py-6 text-sm border-t border-gray-200">
+        © 2025 HealthMate. All rights reserved.
+      </footer>
     </div>
   );
 }
