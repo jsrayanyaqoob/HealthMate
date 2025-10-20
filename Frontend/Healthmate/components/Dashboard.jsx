@@ -135,7 +135,7 @@ export default function Dashboard() {
                     {u.name || "(no name)"}
                   </h2>
                 )}
-                <p className="text-gray-500 text-sm mt-1">{u._id}</p>
+                <p className="text-gray-500 text-sm mt-1">{u.email}</p>
               </div>
 
               {/* Right - Last Activity */}
