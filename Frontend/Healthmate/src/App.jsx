@@ -1,4 +1,5 @@
-import React, { useState } from "react";
+import React from "react";
+import { Routes, Route } from "react-router-dom";
 import HomePage from "../components/Home";
 import Login from "../components/Login";
 import Signup from "../components/Signup";
@@ -6,17 +7,13 @@ import Dashboard from "../components/Dashboard";
 import Report from "../components/Feedback";
 
 export default function App() {
-  const [page, setPage] = useState("home");
-
-  const handleNavigate = (target) => setPage(target);
-
   return (
-    <div>
-      {page === "home" && <HomePage onNavigate={handleNavigate} />}
-      {page === "login" && <Login onNavigate={handleNavigate} />}
-      {page === "signup" && <Signup onNavigate={handleNavigate} />}
-      {page === "dashboard" && <Dashboard onNavigate={handleNavigate} />}
-      {page === "report" && <Report onNavigate={handleNavigate} />}
-    </div>
+    <Routes>
+      <Route path="/" element={<HomePage />} />
+      <Route path="/login" element={<Login />} />
+      <Route path="/signup" element={<Signup />} />
+      <Route path="/dashboard" element={<Dashboard />} />
+      <Route path="/report" element={<Report />} />
+    </Routes>
   );
 }
