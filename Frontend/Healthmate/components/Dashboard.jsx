@@ -84,8 +84,14 @@ export default function Dashboard() {
       <header className="bg-white shadow-md py-3 px-8 flex justify-between items-center">
         {/* Left - Logo */}
         <div className="flex items-center space-x-2">
-          <h1 className="text-xl font-bold text-pink-600">HealthMate</h1>
-        </div>
+            <div className="bg-gradient-to-r from-pink-500 to-orange-500 p-1 rounded-full">
+              <span className="text-white font-bold text-lg">❤</span>
+            </div>
+            <div>
+              <h1 className="font-bold text-xl text-gray-800">HealthMate</h1>
+              <p className="text-sm text-gray-500 -mt-1">Sehat ka Smart Dost</p>
+            </div>
+          </div>
 
         {/* Middle - Nav Links */}
         <nav className="hidden md:flex space-x-8">

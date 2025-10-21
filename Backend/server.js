@@ -2,6 +2,8 @@ const express = require("express");
 const mongoose = require("mongoose");
 const cors = require("cors");
 const dotenv = require("dotenv");
+const Report = require('./models/Report')
+const router = express.Router();
 
 dotenv.config();
 const app = express();
@@ -125,6 +127,49 @@ app.post("/api/auth/login", async (req, res) => {
     res.status(500).json({ message: "Server error during login" });
   }
 });
+
+app.post("/api/reports", async (req, res) => {
+  try {
+    const { title, type, description } = req.body;
+    // save report to DB or just return the object
+    res.json({ success: true, report: { title, type, description } });
+  } catch (err) {
+    console.error(err);
+    res.status(500).json({ success: false, message: "Failed to add report" });
+  }
+});
+
+app.use(router)
+
+router.post("/api/feedback", async (req, res) => {
+  const { report } = req.body;
+  if (!report) return res.status(400).json({ success: false, message: "No report provided" });
+
+  try {
+    const response = await fetch("https://api.openai.com/v1/responses", {
+  method: "POST",
+  headers: {
+    "Content-Type": "application/json",
+    "Authorization": `Bearer ${process.env.GEMINI_API_KEY}`
+  },
+  body: JSON.stringify({
+    model: "gemini-1.5",
+    input: `Analyze this medical report and provide a concise explanation:\n\n${report.description}`
+  }),
+});
+
+
+    const data = await response.json();
+    const aiText = data?.choices?.[0]?.message?.content || "No response";
+
+    res.json({ success: true, feedback: aiText });
+  } catch (err) {
+    console.error("Gemini error:", err.message);
+    res.status(500).json({ success: false, message: "Failed to get AI feedback" });
+  }
+});
+
+module.exports = router;
 
 
 // ================== Start ==================
