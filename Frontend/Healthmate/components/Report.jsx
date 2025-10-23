@@ -28,121 +28,71 @@ export default function AddReport() {
         }
     };
 
-//     const handleSubmit = async (e) => {
-//         e.preventDefault();
+    const handleSubmit = async (e) => {
+        e.preventDefault();
 
-//         // Validate required fields
-//         if (!formData.testName.trim() || !formData.date || !formData.notes.trim()) {
-//             alert("Please fill in all required fields!");
-//             return;
-//         }
+        if (!formData.testName.trim() || !formData.date || !formData.notes.trim()) {
+            console.warn("Please fill in all required fields!");
+            return;
+        }
 
-//         let uploadedFiles = [];
+        try {
+            let res;
 
-//         // Upload files to Cloudinary
-//         if (formData.files.length > 0) {
-//             const uploadPromises = formData.files.map(async (file) => {
-//                 const data = new FormData();
-//                 data.append("file", file);
-//                 data.append("upload_preset", "Healthmate"); // replace with your preset
+            // If files present, send as multipart/form-data
+            if (formData.files && formData.files.length > 0) {
+                const fd = new FormData();
+                fd.append("title", formData.title || "Untitled Report");
+                fd.append("type", "Medical");
+                fd.append("testName", formData.testName);
+                fd.append("date", formData.date);
+                fd.append("price", formData.price);
+                fd.append("notes", formData.notes);
+                for (const file of formData.files) {
+                    fd.append("files", file);
+                }
 
-//                 const res = await fetch(`https://api.cloudinary.com/v1_1/duamkmvwc/upload`, {
-//                     method: "POST",
-//                     body: data,
-//                 });
+                res = await fetch("http://localhost:5000/api/reports", {
+                    method: "POST",
+                    body: fd, // browser sets Content-Type including boundary
+                });
+            } else {
+                // No files: send JSON
+                const payload = {
+                    title: formData.title || "Untitled Report",
+                    type: "Medical",
+                    testName: formData.testName,
+                    date: formData.date,
+                    price: formData.price,
+                    notes: formData.notes,
+                };
 
-//                 const fileData = await res.json();
-//                 return fileData.secure_url; // this is the Cloudinary file URL
-//             });
+                res = await fetch("http://localhost:5000/api/reports", {
+                    method: "POST",
+                    headers: { "Content-Type": "application/json" },
+                    body: JSON.stringify(payload),
+                });
+            }
 
-//             uploadedFiles = await Promise.all(uploadPromises);
-//         }
+            if (!res.ok) {
+                const errText = await res.text().catch(() => "");
+                console.error("Failed to add report:", res.status, errText);
+                return;
+            }
 
-//         // Prepare payload for your backend
-//         const payload = {
-//             title: formData.title || "Untitled Report",
-//             type: "Medical",
-//             description: `Test Name: ${formData.testName}
-// Date: ${formData.date}
-// Price: ${formData.price}
-// Notes: ${formData.notes}`,
-//             files: uploadedFiles,
-//         };
+            // parse response if needed
+            try {
+                await res.json();
+            } catch {
+                // ignore non-JSON responses
+            }
 
-//         try {
-//             const res = await fetch("http://localhost:5000/api/reports", {
-//                 method: "POST",
-//                 headers: { "Content-Type": "application/json" },
-//                 body: JSON.stringify(payload),
-//             });
-
-//             const data = await res.json();
-//             if (data.success) {
-//                 alert("✅ Report added successfully!");
-//                 navigate("/feedback");
-//             } else {
-//                 alert("⚠️ Failed to add report.");
-//             }
-//         } catch (err) {
-//             console.error("Error submitting report:", err);
-//             alert("❌ Server error while submitting.");
-//         }
-//     };
-
-
-
-
-
-
-
-const handleSubmit = async (e) => {
-  e.preventDefault();
-
-  // Validate required fields
-  if (!formData.testName.trim() || !formData.date || !formData.notes.trim()) {
-    alert("Please fill in all required fields!");
-    return;
-  }
-
-  const payload = {
-    title: formData.title || "Untitled Report",
-    type: "Medical",
-    description: `Test Name: ${formData.testName}
-Date: ${formData.date}
-Price: ${formData.price}
-Notes: ${formData.notes}`,
-  };
-
-  try {
-    // Save report
-    const res = await fetch("http://localhost:5000/api/reports", {
-      method: "POST",
-      headers: { "Content-Type": "application/json" },
-      body: JSON.stringify(payload),
-    });
-
-    const data = await res.json();
-    if (!data.success) return alert("⚠️ Failed to add report");
-
-    // Get Gemini feedback
-    const feedbackRes = await fetch("http://localhost:5000/api/feedback", {
-      method: "POST",
-      headers: { "Content-Type": "application/json" },
-      body: JSON.stringify({ report: data.report }),
-    });
-
-    const feedbackData = await feedbackRes.json();
-    if (!feedbackData.success) return alert("⚠️ Failed to get AI feedback");
-
-    localStorage.setItem("feedback", feedbackData.feedback);
-    navigate("/feedback");
-
-  } catch (err) {
-    console.error("Error submitting report:", err);
-    alert("❌ Server error while submitting.");
-  }
-};
-
+            // silent success: navigate back
+            navigate(-1);
+        } catch (err) {
+            console.error("Error submitting report:", err);
+        }
+    };
 
     return (
         <div className="min-h-screen bg-[#fafafa] flex flex-col items-center py-4 px-4">
@@ -201,7 +151,6 @@ Notes: ${formData.notes}`,
 
                 {/* File Upload */}
 
-
                 {/* .......................................................... */}
 
                 <div>
@@ -216,7 +165,6 @@ Notes: ${formData.notes}`,
                         className="block w-full text-gray-700 text-sm"
                     />
                 </div>
-
 
                 {/* ........................................................... */}
 
