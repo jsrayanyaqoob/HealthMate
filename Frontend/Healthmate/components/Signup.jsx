@@ -29,17 +29,18 @@ if (formData.password !== formData.confirmPassword) {
 }
 
 try {
-  const res = await fetch("http://localhost:5000/api/auth/signup", {
-    method: "POST",
-    headers: {
-      "Content-Type": "application/json",
-    },
-    body: JSON.stringify({
-      name: formData.name,
-      email: formData.email,
-      password: formData.password,
-    }),
-  });
+const res = await fetch("http://localhost:5000/api/auth/signup", {
+  method: "POST",
+  headers: {
+    "Content-Type": "application/json",
+  },
+  body: JSON.stringify({
+    name: formData.name,
+    email: formData.email,
+    password: formData.password,
+  }),
+});
+
 
   const data = await res.json();
 

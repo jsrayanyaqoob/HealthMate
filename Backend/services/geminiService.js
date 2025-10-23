@@ -1,44 +1,41 @@
-const { GoogleGenerativeAI } = require('@google/generative-ai');
+const fetch = require("node-fetch");
 
-class GeminiService {
-  constructor() {
-    this.genAI = new GoogleGenerativeAI(process.env.GEMINI_API_KEY);
-    this.model = this.genAI.getGenerativeModel({ model: "gemini-pro" });
-  }
+async function getGeminiFeedback(description) {
+  try {
+    const response = await fetch(
+      `https://generativelanguage.googleapis.com/v1beta/models/gemini-1.5-flash:generateContent?key=${process.env.GEMINI_API_KEY}`,
+      {
+        method: "POST",
+        headers: { "Content-Type": "application/json" },
+        body: JSON.stringify({
+          contents: [
+            {
+              parts: [
+                {
+                  text: `Analyze this medical report and give clear feedback:\n\n${description}`,
+                },
+              ],
+            },
+          ],
+        }),
+      }
+    );
 
-  async generateFeedbackResponse(reportData) {
-    try {
-      const { title, type, description } = reportData;
-      
-      const prompt = `
-        You are a helpful AI assistant for a health and wellness platform. 
-        A user has submitted a report with the following details:
-        
-        Title: ${title}
-        Type: ${type}
-        Description: ${description}
-        
-        Please provide a helpful, professional response that:
-        1. Acknowledges their concern
-        2. Provides relevant advice or suggestions based on the report type
-        3. Offers encouragement and support
-        4. Keeps the response concise but informative (2-3 paragraphs max)
-        
-        If this is a medical report, remind them to consult with healthcare professionals.
-        If it's technical, provide troubleshooting suggestions.
-        If it's financial, offer general financial wellness tips.
-        
-        Make the response warm, supportive, and actionable.
-      `;
+    const data = await response.json();
 
-      const result = await this.model.generateContent(prompt);
-      const response = await result.response;
-      return response.text();
-    } catch (error) {
-      console.error('Gemini API Error:', error);
-      throw new Error('Failed to generate AI response');
+    if (!response.ok) {
+      console.error("Gemini API Error Response:", data);
+      return "Error fetching AI feedback.";
     }
+
+    const feedback =
+      data?.candidates?.[0]?.content?.parts?.[0]?.text ||
+      "AI could not generate feedback.";
+    return feedback;
+  } catch (err) {
+    console.error("Gemini API error:", err.message);
+    return "Error fetching AI feedback.";
   }
 }
 
-module.exports = new GeminiService();
+module.exports = { getGeminiFeedback };
